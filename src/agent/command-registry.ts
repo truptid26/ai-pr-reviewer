@@ -12,7 +12,7 @@ export class CommandRegistry {
     if (!command) {
       throw new Error(`Unknown command: ${commandName}`);
     }
-    
+
     return command;
   }
 }
