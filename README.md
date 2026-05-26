@@ -1,98 +1,152 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# AI PR Reviewer
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A learning-focused NestJS/TypeScript implementation of an AI pull request reviewer inspired by PR-Agent.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## What It Does
 
-## Description
+This tool accepts a GitHub pull request URL, fetches PR metadata and changed files, sends the diff to an AI provider, validates structured YAML output, formats the result as Markdown, and can publish the review as a PR comment.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Current Status
 
-## Project setup
+Implemented:
+- CLI review flow
+- GitHub provider
+- Mock, Ollama, and OpenAI AI providers
+- diff limiting
+- YAML parsing with Zod validation
+- Markdown review formatting
+- dry-run mode
+- basic clean error handling
+- unit test setup
 
-```bash
-$ npm install
-```
+Not yet implemented:
+- GitHub webhook mode
+- GitLab support
+- Jira context
+- repository rules context
+- Docker/Kubernetes
+- observability
 
-## Compile and run the project
+## Architecture
 
-```bash
-# development
-$ npm run start
+Current flow:
 
-# watch mode
-$ npm run start:dev
+CLI
+  -> AgentService
+  -> CommandRegistry
+  -> ReviewCommand
+  -> GitProvider + AIProvider + DiffService
+  -> YAML parser + Zod validator
+  -> Markdown formatter
+  -> GitHub PR comment or dry-run output
 
-# production mode
-$ npm run start:prod
-```
+## Requirements
 
-## Run tests
+Node.js
+npm
+GitHub personal access token
+Optional: Ollama for local AI
+Optional: OpenAI API key
 
-```bash
-# unit tests
-$ npm run test
+## Setup
 
-# e2e tests
-$ npm run test:e2e
+npm install
+cp .env.example .env
 
-# test coverage
-$ npm run test:cov
-```
+## Environment Variables
 
-## Deployment
+GITHUB_TOKEN=
+AI_PROVIDER=mock
+OPENAI_API_KEY=
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=llama3.1:8b
+DEBUG=false
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+# Supported AI_PROVIDER values:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+mock
+ollama
+openai
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+## GitHub Token Permissions
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+For a fine-grained GitHub token, enable:
 
-## Resources
+- Contents: Read-only
+- Pull requests: Read and write
+- Issues: Read and write
 
-Check out a few resources that may come in handy when working with NestJS:
+PR comments are published through GitHub's Issues API, so Issues permission is required.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Running With Mock AI
 
-## Support
+AI_PROVIDER=mock npm run cli -- https://github.com/owner/repo/pull/1 review --dry-run
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Running With Ollama
 
-## Stay in touch
+# start ollama
+ollama serve
+ollama pull llama3.1:8b
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# env config
+AI_PROVIDER=ollama
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=llama3.1:8b
 
-## License
+# command
+npm run cli -- https://github.com/owner/repo/pull/1 review --dry-run
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## Running With OpenAI
+
+# env config
+AI_PROVIDER=openai
+OPENAI_API_KEY=your_key
+
+# command
+npm run cli -- https://github.com/owner/repo/pull/1 review --dry-run
+
+## Dry Run Mode
+
+Dry-run mode runs the full review pipeline but does not publish a GitHub comment.
+npm run cli -- https://github.com/owner/repo/pull/1 review --dry-run
+
+## Publishing A Review Comment
+
+Omit `--dry-run` to publish a real PR comment.
+npm run cli -- https://github.com/owner/repo/pull/1 review
+WARNING: Only run this against repos/PRs where you are allowed to post comments.
+
+## Testing
+
+npm test
+
+## Roadmap
+
+GitHub webhook mode
+GitLab provider
+repository-aware reviews using AGENTS.md, .cursorrules, and .cursor/rules
+Jira story compliance checks
+structured output repair step
+token-based diff limiting
+eval runner for AI review quality
+structured logging and metrics
+Dockerfile and docker-compose
+GitHub Actions CI
+Kubernetes manifests
+
+## Engineering Notes
+
+## Engineering Notes
+
+This project is designed as a production-style learning clone rather than a line-by-line port of PR-Agent.
+
+Key decisions:
+
+- The review flow depends on interfaces like `GitProvider` and `AIProvider`, so GitHub/OpenAI/Ollama can be swapped without changing command logic.
+- AI output is requested as YAML, then parsed with `js-yaml` and validated with `zod` before being formatted as Markdown.
+- Ollama is supported for local/private development where code should not leave the machine or company network.
+- `--dry-run` mode is used to test the full pipeline safely without publishing PR comments.
+- Low temperature is used for structured AI output to reduce randomness and improve parse reliability.
+- GitHub PR comments are published through the Issues API, which affects fine-grained token permissions.
+
+See `PROJECT_CONTEXT.md` for the full engineering journal, roadmap, and lessons learned.
