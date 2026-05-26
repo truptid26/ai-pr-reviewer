@@ -1,4 +1,6 @@
 import { AIProvider, ChatMessage } from './ai-provider.interface.js';
+import { z } from 'zod';
+import { AppError } from '../common/app-error.js';
 
 export class OllamaProvider implements AIProvider {
   private readonly baseUrl: string;
@@ -26,12 +28,19 @@ export class OllamaProvider implements AIProvider {
     });
 
     if (!response.ok) {
-      throw new Error(
+      throw new AppError(
         `Ollama request failed: ${response.status} ${response.statusText}`,
       );
     }
 
-    const data = await response.json();
+    const OllamaChatResponseSchema = z.object({
+      message: z.object({
+        content: z.string(),
+      }),
+    });
+
+    const rawData: unknown = await response.json();
+    const data = OllamaChatResponseSchema.parse(rawData);
     return data.message?.content ?? '';
   }
 }

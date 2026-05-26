@@ -47,6 +47,7 @@ export class ReviewCommand implements Command {
       const parsedReview = parseReviewResult(rawReview);
       markdown = formatReviewMarkdown(parsedReview);
     } catch (error) {
+      console.log(error);
       console.warn(
         'Initial AI response was not valid YAML. Attempting repair...',
       );
@@ -71,6 +72,11 @@ export class ReviewCommand implements Command {
       }
     }
 
+    if (context.dryRun) {
+      console.log('--- DRY RUN REVIEW OUTPUT ---');
+      console.log(markdown);
+      return;
+    }
     await this.gitProvider.publishComment(pullRequest, markdown);
   }
 }

@@ -2,7 +2,11 @@ import { CommandRegistry } from './command-registry.js';
 export class AgentService {
   constructor(private readonly commandRegistry: CommandRegistry) {}
 
-  async handleRequest(prUrl: string, commandName: string): Promise<void> {
+  async handleRequest(
+    prUrl: string,
+    commandName: string,
+    options?: { dryRun?: boolean },
+  ): Promise<void> {
     const normalizedCommandName = commandName
       .trim()
       .replace(/^\//, '')
@@ -11,6 +15,7 @@ export class AgentService {
 
     await command.execute({
       prUrl,
+      dryRun: options?.dryRun ?? false,
     });
   }
 }

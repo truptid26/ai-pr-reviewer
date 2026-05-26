@@ -1,5 +1,6 @@
 export type CommandContext = {
   prUrl: string;
+  dryRun?: boolean;
 };
 
 export interface Command {
