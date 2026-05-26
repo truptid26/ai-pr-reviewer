@@ -31,10 +31,12 @@ class FakeGitProvider implements GitProvider {
   ];
 
   getPullRequest(_prUrl: string): Promise<PullRequest> {
+    void _prUrl;
     return Promise.resolve(this.pullRequest);
   }
 
   getDiffFiles(_pullRequest: PullRequest): Promise<DiffFile[]> {
+    void _pullRequest;
     return Promise.resolve(this.files);
   }
 
@@ -147,6 +149,7 @@ describe('ReviewCommand', () => {
 
 class InvalidYamlAIProvider implements AIProvider {
   chat(_messages: ChatMessage[]): Promise<string> {
+    void _messages;
     return Promise.resolve(
       [
         'This is not YAML.',
@@ -160,6 +163,7 @@ class InvalidYamlAIProvider implements AIProvider {
 }
 class ThrowingAIProvider implements AIProvider {
   chat(_messages: ChatMessage[]): Promise<string> {
+    void _messages;
     return Promise.reject(new Error('AI provider failed'));
   }
 }
