@@ -1,9 +1,10 @@
 import { DiffFile, PullRequest } from '../../domain/pr.types.js';
 import fs from 'node:fs';
 import path from 'node:path';
+import { REVIEW_PROMPT_VERSION } from '../../constants/prompt.constants.js';
 
 export function buildReviewSystemPrompt(): string {
-  return loadPrompt('review/system-${REVIEW_PROMPT_VERSION}.txt');
+  return loadPrompt(`review/system-${REVIEW_PROMPT_VERSION}.txt`);
 }
 
 export function buildReviewUserPrompt(
@@ -22,7 +23,7 @@ export function buildReviewUserPrompt(
     )
     .join('\n\n');
 
-  const template = loadPrompt('review/user-${REVIEW_PROMPT_VERSION}.txt');
+  const template = loadPrompt(`review/user-${REVIEW_PROMPT_VERSION}.txt`);
   return template
     .replace('{{TITLE}}', pullRequest.title)
     .replace('{{DESCRIPTION}}', pullRequest.body || '(no description)')
@@ -31,7 +32,7 @@ export function buildReviewUserPrompt(
 }
 
 export function loadPrompt(filePath: string): string {
-  const promptPath = path.join(process.cwd(), 'prompts', filePath);
+  const promptPath = path.join(process.cwd(), 'src/prompts', filePath);
 
   return fs.readFileSync(promptPath, 'utf-8');
 }
