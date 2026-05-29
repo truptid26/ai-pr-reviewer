@@ -70,6 +70,8 @@ CLI
 - GitHub provider
 - Mock, Ollama, and OpenAI AI providers
 - Diff limiting
+- token-aware diff budgeting
+- prompt versioning with external prompt templates
 - YAML parsing with Zod validation
 - Markdown review formatting
 - Dry-run mode
@@ -77,7 +79,11 @@ CLI
 - Unit testing setup
 - Docker multi-stage build
 - GitHub Actions CI pipeline
-- Security scanning pipeline
+- CodeQL security scanning
+- TruffleHog secret scanning
+- Trivy container vulnerability scanning
+- test coverage enforcement
+
 
 ## Planned Roadmap
 
@@ -86,7 +92,6 @@ CLI
 - Jira context integration
 - Repository rules context
 - Structured output repair step
-- Token-based diff limiting
 - AI evaluation runner
 - Observability and metrics
 - Kubernetes manifests
@@ -311,6 +316,9 @@ Key engineering decisions:
 
 - The review flow depends on interfaces like `GitProvider` and `AIProvider`, allowing providers to be swapped without changing command logic.
 - AI output is requested as structured YAML, then parsed with `js-yaml` and validated using `zod` before Markdown formatting.
+- AI prompts are versioned and stored as external templates rather than embedded in source code.
+- Prompt templates use runtime variable substitution for pull request metadata and diffs.
+- Token-aware diff budgeting is used to control context size and prevent oversized LLM requests.
 - Ollama support enables fully local/private AI inference where source code should not leave the machine or company network.
 - `--dry-run` mode allows validating the entire review pipeline safely without publishing PR comments.
 - Low temperature settings are used for structured AI output to reduce randomness and improve parsing reliability.
