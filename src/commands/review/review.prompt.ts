@@ -1,15 +1,9 @@
 import { DiffFile, PullRequest } from '../../domain/pr.types.js';
+import fs from 'node:fs';
+import path from 'node:path';
 
 export function buildReviewSystemPrompt(): string {
-  return [
-    'You are a code review engine.',
-    'You must output only valid YAML.',
-    'Do not output Markdown.',
-    'Do not output explanations.',
-    'Do not output code fences.',
-    'Do not explain how to generate YAML.',
-    'Your entire response must be parseable by js-yaml.',
-  ].join('\n');
+  return loadPrompt('review/system-${REVIEW_PROMPT_VERSION}.txt');
 }
 
 export function buildReviewUserPrompt(
@@ -28,41 +22,16 @@ export function buildReviewUserPrompt(
     )
     .join('\n\n');
 
-  return [
-    `Review this pull request.`,
-    ``,
-    `Title: ${pullRequest.title}`,
-    `Description: ${pullRequest.body || '(no description)'}`,
-    ``,
-    `Changed files: ${files.length}`,
-    ``,
-    `Diff:`,
-    diffText || '(No patch available)',
-    ``,
-    `Return only valid YAML with this shape:
-summary: string
-findings:
-  - severity: low | medium | high
-    file: string
-    line: number
-    message: string
-    suggestion: string
+  const template = loadPrompt('review/user-${REVIEW_PROMPT_VERSION}.txt');
+  return template
+    .replace('{{TITLE}}', pullRequest.title)
+    .replace('{{DESCRIPTION}}', pullRequest.body || '(no description)')
+    .replace('{{FILE_COUNT}}', String(files.length))
+    .replace('{{DIFF}}', diffText || '(No patch available)');
+}
 
-If there are no findings, return findings: [].
-Do not wrap the YAML in markdown fences.
-Return only this YAML shape:
+export function loadPrompt(filePath: string): string {
+  const promptPath = path.join(process.cwd(), 'prompts', filePath);
 
-summary: "short summary"
-findings:
-  - severity: "low"
-    file: "path/to/file.ts"
-    line: 1
-    message: "specific issue"
-    suggestion: "specific fix"
-
-If there are no findings, return exactly:
-
-summary: "No major issues found."
-findings: []`,
-  ].join('\n');
+  return fs.readFileSync(promptPath, 'utf-8');
 }

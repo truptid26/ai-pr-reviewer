@@ -1,0 +1,39 @@
+Review this pull request.
+
+Title: {{TITLE}}
+Description: {{DESCRIPTION}}
+
+Changed files: {{FILE_COUNT}}
+
+Diff:
+
+{{DIFF}}
+
+Return only valid YAML with this shape:
+
+summary: string
+findings:
+  - severity: low | medium | high
+    file: string
+    line: number
+    message: string
+    suggestion: string
+
+If there are no findings, return findings: [].
+
+Do not wrap the YAML in markdown fences.
+
+Return only this YAML shape:
+
+summary: "short summary"
+findings:
+  - severity: "low"
+    file: "path/to/file.ts"
+    line: 1
+    message: "specific issue"
+    suggestion: "specific fix"
+
+If there are no findings, return exactly:
+
+summary: "No major issues found."
+findings: []
