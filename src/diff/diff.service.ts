@@ -1,8 +1,9 @@
 import { DiffFile } from '../domain/pr.types.js';
+import { estimateTokens } from '../common/token.utils.js';
 
 export class DiffService {
-  limitFiles(files: DiffFile[], maxCharacters: number): DiffFile[] {
-    let totalCharacters = 0;
+  limitFiles(files: DiffFile[], maxTokens: number): DiffFile[] {
+    let totalTokens = 0;
     const selectedFiles: DiffFile[] = [];
 
     for (const file of files) {
@@ -10,14 +11,26 @@ export class DiffService {
         continue;
       }
 
-      const patchLength = file.patch.length;
+      const diffSection = [
+        `File: ${file.filename}`,
+        `Status: ${file.status}`,
+        'Patch:',
+        file.patch,
+      ].join('\n');
 
-      if (totalCharacters + patchLength > maxCharacters) {
+      const patchTokens = estimateTokens(diffSection);
+
+      if (totalTokens + patchTokens > maxTokens) {
         continue;
       }
 
       selectedFiles.push(file);
-      totalCharacters += patchLength;
+      totalTokens += patchTokens;
+
+      console.log({
+        totalTokens,
+        includedFiles: selectedFiles.length,
+      });
     }
 
     return selectedFiles;
