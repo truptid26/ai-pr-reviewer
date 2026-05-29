@@ -5,4 +5,5 @@ export type ChatMessage = {
 
 export interface AIProvider {
   chat(messages: ChatMessage[]): Promise<string>;
+  getName(): string;
 }

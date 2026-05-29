@@ -18,4 +18,8 @@ export class OpenAIProvider implements AIProvider {
     });
     return response.choices[0]?.message?.content ?? '';
   }
+
+  getName(): string {
+    return 'OPENAI';
+  }
 }

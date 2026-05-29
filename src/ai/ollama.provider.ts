@@ -43,4 +43,8 @@ export class OllamaProvider implements AIProvider {
     const data = OllamaChatResponseSchema.parse(rawData);
     return data.message?.content ?? '';
   }
+
+  getName(): string {
+    return 'OLLAMA';
+  }
 }

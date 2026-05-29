@@ -64,6 +64,10 @@ class FakeAIProvider implements AIProvider {
       ].join('\n'),
     );
   }
+
+  getName(): string {
+    return 'FAKE';
+  }
 }
 describe('ReviewCommand', () => {
   it('publishes a formatted AI review comment', async () => {
@@ -160,10 +164,16 @@ class InvalidYamlAIProvider implements AIProvider {
       ].join('\n'),
     );
   }
+  getName(): string {
+    return '';
+  }
 }
 class ThrowingAIProvider implements AIProvider {
   chat(_messages: ChatMessage[]): Promise<string> {
     void _messages;
     return Promise.reject(new Error('AI provider failed'));
+  }
+  getName(): string {
+    return '';
   }
 }

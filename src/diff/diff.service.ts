@@ -26,13 +26,12 @@ export class DiffService {
 
       selectedFiles.push(file);
       totalTokens += patchTokens;
-
-      console.log({
-        totalTokens,
-        includedFiles: selectedFiles.length,
-      });
     }
 
+    console.log({
+      totalTokens,
+      includedFiles: selectedFiles.length,
+    });
     return selectedFiles;
   }
 }

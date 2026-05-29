@@ -16,4 +16,8 @@ export class MockAIProvider implements AIProvider {
       ].join('\n'),
     );
   }
+
+  getName(): string {
+    return 'MOCK';
+  }
 }
