@@ -324,6 +324,3 @@ Key engineering decisions:
 - Low temperature settings are used for structured AI output to reduce randomness and improve parsing reliability.
 - GitHub PR comments are published through the Issues API, which affects required fine-grained token permissions.
 - The CI pipeline follows a DevSecOps-style workflow with testing, dependency scanning, secret scanning, container scanning, and static analysis.
-
-See `PROJECT_CONTEXT.md` for the full engineering journal, roadmap, architecture evolution, and lessons learned.
-
