@@ -1,0 +1,30 @@
+{
+  "name": "no major issues",
+  "pullRequest": {
+    "owner": "example",
+    "repo": "ai-pr-reviewer",
+    "number": 3,
+    "title": "Rename helper for clarity",
+    "body": "Renames a helper function without changing behavior.",
+    "url": "https://github.com/example/ai-pr-reviewer/pull/3",
+    "baseBranch": "main",
+    "headBranch": "chore/rename-helper"
+  },
+  "files": [
+    {
+      "filename": "src/utils/name.ts",
+      "status": "modified",
+      "patch": "@@ -1,5 +1,5 @@\n-export function fmtName(name: string) {\n+export function formatName(name: string) {\n   return name.trim();\n }",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2
+    }
+  ],
+  "expectations": {
+    "mustParse": true,
+    "expectedFiles": [],
+    "expectedKeywords": [],
+    "forbiddenFiles": ["src/payments/payment.service.ts"],
+    "maxFindings": 1
+  }
+}

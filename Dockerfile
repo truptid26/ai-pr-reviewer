@@ -27,4 +27,4 @@ RUN npm ci --omit=dev
 
 COPY --from=build /app/dist ./dist
 
-ENTRYPOINT ["node", "dist/cli.js"]
+ENTRYPOINT ["node", "dist/src/cli.js"]

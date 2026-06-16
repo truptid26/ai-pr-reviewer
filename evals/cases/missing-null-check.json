@@ -1,0 +1,30 @@
+{
+  "name": "missing null check",
+  "pullRequest": {
+    "owner": "example",
+    "repo": "ai-pr-reviewer",
+    "number": 2,
+    "title": "Handle optional user profile",
+    "body": "Updates profile rendering logic for users that may not have profile data.",
+    "url": "https://github.com/example/ai-pr-reviewer/pull/2",
+    "baseBranch": "main",
+    "headBranch": "feature/profile-null-check"
+  },
+  "files": [
+    {
+      "filename": "src/profile/profile.service.ts",
+      "status": "modified",
+      "patch": "@@ -10,7 +10,7 @@ export class ProfileService {\n   formatDisplayName(user: User) {\n-    return user.name;\n+    return user.profile.displayName.toUpperCase();\n   }\n }",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2
+    }
+  ],
+  "expectations": {
+    "mustParse": true,
+    "expectedFiles": ["src/profile/profile.service.ts"],
+    "expectedKeywords": ["null", "undefined", "profile"],
+    "forbiddenFiles": ["src/auth/auth.service.ts"],
+    "minFindings": 1
+  }
+}
